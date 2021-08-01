@@ -1,0 +1,3 @@
+LIBRARY shim.dll
+EXPORTS
+	DriverFinalPolicy
