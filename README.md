@@ -184,6 +184,10 @@ to `WINTRUST.DLL`. If we all follow those rules, there will be safe and
 reliable support for driver updates on Windows 7 and 8.1. Hopefully this turns
 a rather hopeless situation into a productive one.
 
+### Addendum
+
+Looking at things a bit closer, it appears as though the userspace PnP verifier checks for Authenticode signatures using the generic Authenticode check -- `WINTRUST_ACTION_GENERIC_VERIFY_V2`. This check is the normal Authenticode check that still remains valid for software in general, not just for kernel drivers. That means it is possible to receive Windows 10 attested `.sys.` and `.cat` files, and then simply _re-sign_ the `.cat` file with a ordinary software Authenticode certificate. The still-valid software Authenticode certificate will enable PnP installation verifier to proceed, and the correct Microsoft signature on the `.sys` will allow the kernel to load it. In very brief tests, this appears to be the case, though it does warrant a bit more testing, as setupapi still aborts with `CERT_E_UNTRUSTEDROOT` (0x800B0109), despite letting the copy proceed, which on some configurations could wind up being fatal. In general this might require a bit more surgery than the above, but for others it could also prove a useful strategy.
+
 <style>
 .markdown-body {
 	max-width: 720px;
